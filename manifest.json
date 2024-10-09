@@ -3,12 +3,7 @@
     "name": "EyeProtection",
     "version": "1.0",
     "description": "Chrome extension that implements the 20 20 20 rule",
-    "permissions": [
-        "tabs",
-        "activeTab",
-        "storage",
-        "notifications"
-    ],
+    "permissions": ["storage"],
     "action": {
         "default_popup": "popup.html"
     },
