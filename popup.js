@@ -1,60 +1,87 @@
 var timerElement = document.getElementById("timer");
 var pauseButton = document.getElementById("pause");
-var isTimerPaused = false;
 var startButton = document.getElementById("start");
 var resumeButton = document.getElementById("resume");
 var resetButton = document.getElementById("reset");
+var isTimerPaused = false;
 var isTimerRunning = false;
 
-// Listen for messages from background script
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    console.log(message);
-    if (message.type === "updateTimer") {
-        // Update timer display
-        timerElement.textContent = message.time;
-    }
+document
+  .getElementById("toggle-dark-mode")
+  .addEventListener("click", function () {
+    // Check if dark mode is already enabled
+    chrome.storage.sync.get("darkMode", function (data) {
+      const newMode = !data.darkMode;
+
+      // Store the new mode in Chrome storage
+      chrome.storage.sync.set({ darkMode: newMode }, function () {
+        // Apply the dark mode style to the current tab
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            chrome.scripting.executeScript({
+              target: { tabId: tabs[0].id },
+              function: toggleDarkMode,
+              args: [newMode],
+            });
+          }
+        );
+      });
+    });
+  });
+
+// Function to toggle dark mode styles on the current page
+function toggleDarkMode(isDark) {
+  if (isDark) {
+    document.body.style.backgroundColor = "#121212";
+    document.body.style.color = "#ffffff";
+  } else {
+    document.body.style.backgroundColor = "#ffffff";
+    document.body.style.color = "#000000";
+  }
+}
+
+// Listen for messages from the background script
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.type === "updateTimer") {
+    // Update timer display
+    timerElement.textContent = message.time;
+  }
 });
 
-function startTimer() {
-    if (!isTimerRunning) {
-        // Send message to background script to start the timer
-        chrome.runtime.sendMessage({ type: "startTimer" });
-        isTimerRunning = true;
-    }
-}
+// Start the timer
+startButton.addEventListener("click", function () {
+  if (!isTimerRunning) {
+    chrome.runtime.sendMessage({ type: "startTimer" });
+    isTimerRunning = true;
+    isTimerPaused = false; // Timer is not paused when starting
+  }
+});
 
-startButton.addEventListener("click", startTimer);
+// Pause the timer
+pauseButton.addEventListener("click", function () {
+  if (isTimerRunning && !isTimerPaused) {
+    chrome.runtime.sendMessage({ type: "pauseTimer" });
+    isTimerPaused = true;
+  }
+});
 
-pauseButton.addEventListener("click", pauseTimer);
+// Resume the timer
+resumeButton.addEventListener("click", function () {
+  if (isTimerPaused) {
+    chrome.runtime.sendMessage({ type: "resumeTimer" });
+    isTimerPaused = false;
+  }
+});
 
-function pauseTimer() {
-    if (isTimerRunning) {
-        // Send message to background script to pause the timer
-        chrome.runtime.sendMessage({ type: "pauseTimer" });
-        isTimerPaused = true;
-    }
-}
-
-resumeButton.addEventListener("click", resumeTimer);
-
-function resumeTimer() {
-    if (isTimerPaused) {
-        // Send message to background script to resume the timer
-        chrome.runtime.sendMessage({ type: "resumeTimer" });
-        isTimerPaused = false;
-    }
-}
-
-resetButton.addEventListener("click", resetTimer);
-
-function resetTimer() {
-    // Send message to background script to reset the timer
-    chrome.runtime.sendMessage({ type: "resetTimer" });
-    isTimerRunning = false;
-}
+// Reset the timer
+resetButton.addEventListener("click", function () {
+  chrome.runtime.sendMessage({ type: "resetTimer" });
+  isTimerRunning = false;
+  isTimerPaused = false; // Reset the pause state
+});
 
 // Start the timer when the page loads
-window.addEventListener("load", function() {
-    // Send message to background script to get the current timer state
-    chrome.runtime.sendMessage({ type: "getTimerState" });
+window.addEventListener("load", function () {
+  chrome.runtime.sendMessage({ type: "getTimerState" });
 });
