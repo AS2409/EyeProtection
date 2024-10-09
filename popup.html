@@ -1,33 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dark Mode</title>
-    <style>
-        body {
-          width: 200px;
-          height: 100px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: Arial, sans-serif;
-        }
-      </style>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eye Protection</title>
     <link rel="stylesheet" href="popup.css">
-    
+    <style>
+        body {
+            width: 200px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+        }
+        #timer {
+            margin-top: 10px;
+            font-size: 24px;
+        }
+        button {
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
-    <button id="toggle-dark-mode">Toggle Dark Mode</button>
-  <script src="popup.js"></script>
     <h1>Eye Protection</h1>
-    <button id="resume">Resume</button>
-    <button id="pause">Pause</button>
-    <button id="reset">Reset</button>
-    <button id="start">Start</button>
+    
+    <!-- Dark Mode Toggle Button -->
+    <button id="toggle-dark-mode">Toggle Dark Mode</button>
+
+    <!-- Timer Controls -->
+    <div>
+        <button id="start">Start</button>
+        <button id="pause">Pause</button>
+        <button id="resume">Resume</button>
+        <button id="reset">Reset</button>
+    </div>
+
+    <!-- Timer Display -->
     <div id="timer">00:00:00</div>
+
+    <!-- JavaScript -->
     <script src="popup.js"></script>
 </body>
 </html>
+
 
 

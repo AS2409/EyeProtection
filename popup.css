@@ -1,11 +1,22 @@
+/* popup.css (or any relevant CSS file) */
+
+/* Light Mode (default) */
 body {
-    padding: 20px;
-    background-color: #f2f2f2;
-}
+    background-color: white;
+    color: black;
+  }
 
 h1 {
     text-align: center;
 }
+
+  
+  /* Dark Mode */
+  body.dark-mode {
+    background-color: #1e1e1e;
+    color: white;
+  }
+  
 
 button {
     padding: 10px 20px;
